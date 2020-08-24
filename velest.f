@@ -10162,7 +10162,7 @@ C
      &               olat/60.,olon/60.
          write(ifil,*)
          write(ifil,*)' Rotation angle (in degr.) clockwise from'
-         write(ifil,'(''North  rotate= '',f6.1,)') rotate
+         write(ifil,'(''North  rotate= '',f6.1)') rotate
          write(ifil,*)
       endif
 c
@@ -10821,15 +10821,14 @@ c     Call:   call CPUTIMER(cpusec)      where cpusec is a real variable
 c
 c
       implicit none
-      integer icpu, clock
-      real cpusec
-      external clock !$pragma C(clock)
-c
-      icpu=clock()
-      cpusec=float(icpu)/1000000.
-c
+
+      real cpusec, icpu
+
+      call cpu_time(icpu)
+      cpusec=icpu
+
       end ! of subroutine cputimer
-c
+
       subroutine DATETIME(dattim)       ! Urs Kradolfer, 16.9.91
 c
 c     File:    datetime_sun.f
@@ -10843,15 +10842,13 @@ c
 c     returned value: dattim  is a character*20
 c
       implicit none
-      character datum*26, dattim*20
-      integer it, itime, ctime, time
-      external ctime !$pragma C(ctime)
-      external sprintf !$pragma C(sprintf)
-      external time !$pragma C(time)
-c
-      it=time(itime)
-      it=ctime(itime)
-      call sprintf(datum,'%s',%val(it))
+      character datum*30, dattim*20
+      character ctime
+      integer(8) it
+
+      it=time8()
+      datum=ctime(it)
+
       dattim=datum(5:24)
 c
       end ! of subroutine datetime
